@@ -1,22 +1,11 @@
-# Use a base image with Alpine Linux 3.13.5
-FROM alpine:3.13.5
+# Use the official Nginx base image
+FROM nginx:latest
 
-# Set the working directory in the container
-WORKDIR /app
+# Remove the default Nginx configuration
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy the application code to the container
-COPY . /app
+# Copy your custom Nginx configuration file
+COPY nginx.conf /etc/nginx/conf.d/
 
-# Install dependencies
-RUN apk --no-cache add python3 \
-    && python3 -m ensurepip \
-    && rm -r /usr/lib/python*/ensurepip \
-    && pip3 install --no-cache --upgrade pip setuptools \
-    && rm -r /root/.cache \
-    && pip install -r requirements.txt
-
-# Expose the port your application listens on
-EXPOSE 8000
-
-# Set the command to run your application
-CMD ["python3", "app.py"]
+# Copy the welcome page HTML file
+COPY index.html /usr/share/nginx/html/
