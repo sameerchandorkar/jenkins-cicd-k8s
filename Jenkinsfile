@@ -23,6 +23,7 @@ pipeline {
     stage('Push to Docker Registry') {
       steps {
         sh 'docker push sameerchandorkar/jenkins:nginx'
+        sh 'docker logout'
       }
     }
     stage('Deploy to Kubernetes') {
@@ -34,11 +35,6 @@ pipeline {
           '''
         }
       }
-    }
-  }
-  post {
-    success {
-      sh 'docker logout'
     }
   }
 }
