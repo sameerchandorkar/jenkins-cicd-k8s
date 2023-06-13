@@ -5,7 +5,7 @@ pipeline {
   }
   environment {
     DOCKERHUB_CREDENTIALS = credentials('sameerchandorkar-dockerhub')
-    KUBECONFIG = credentials('kubernetes-config')
+    KUBECONFIG = credentials('kubenetes')
   }
   stages {
     stage('Build') {
@@ -28,7 +28,7 @@ pipeline {
     }
     stage('Deploy to Kubernetes') {
       steps {
-        withCredentials([file(credentialsId: 'kubernetes-config', variable: 'KUBECONFIG_FILE')]) {
+        withCredentials([file(credentialsId: 'kubenetes', variable: 'KUBECONFIG_FILE')]) {
           sh '''
             cp $KUBECONFIG_FILE kubeconfig.yaml
             kubectl --kubeconfig=kubeconfig.yaml apply -f deployment.yaml
