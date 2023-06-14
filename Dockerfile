@@ -1,3 +1,1 @@
-FROM alpine:latest
-
-CMD ["echo", "Hello, Kubernetes!"]
+FROM nginx:latest
