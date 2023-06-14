@@ -10,7 +10,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'docker build -t sameerchandorkar/jenkins:nginx .'
+        sh 'docker build -t sameerchandorkar/jenkins:alpine .'
       }
     }
     stage('Login to Docker Registry') {
@@ -22,7 +22,7 @@ pipeline {
     }
     stage('Push to Docker Registry') {
       steps {
-        sh 'docker push sameerchandorkar/jenkins:nginx'
+        sh 'docker push sameerchandorkar/jenkins:alpine'
         sh 'docker logout'
       }
     }
