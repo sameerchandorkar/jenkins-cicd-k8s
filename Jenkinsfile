@@ -30,7 +30,7 @@ pipeline {
       steps {
         withCredentials([file(credentialsId: 'kubenetes', variable: 'KUBECONFIG_FILE')]) {
           sh '''
-            cp $KUBECONFIG_FILE kubeconfig.yaml
+            sudo cp $KUBECONFIG_FILE kubeconfig.yaml
             kubectl --kubeconfig=kubeconfig.yaml apply -f deployment.yaml
           '''
         }
