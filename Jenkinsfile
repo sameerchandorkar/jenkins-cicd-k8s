@@ -1,38 +1,44 @@
 pipeline {
   agent any
-  options {
-    buildDiscarder(logRotator(numToKeepStr: '5'))
-  }
-  environment {
-    DOCKERHUB_CREDENTIALS = credentials('sameerchandorkar-dockerhub')
-    KUBECONFIG = credentials('kubenetes')
-  }
+
   stages {
+    stage('Checkout SCM') {
+      steps {
+        // Checkout your source code from Git
+        checkout scm
+      }
+    }
+
     stage('Build') {
       steps {
+        // Build your Docker image
         sh 'docker build -t sameerchandorkar/jenkins:alpine .'
       }
     }
+
     stage('Login to Docker Registry') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'sameerchandorkar-dockerhub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-          sh 'echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin'
+        // Login to Docker registry using credentials
+        withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
+          sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
         }
       }
     }
+
     stage('Push to Docker Registry') {
       steps {
+        // Push Docker image to Docker registry
         sh 'docker push sameerchandorkar/jenkins:alpine'
-        sh 'docker logout'
       }
     }
+
     stage('Deploy to Kubernetes') {
       steps {
-        withCredentials([file(credentialsId: 'kubenetes', variable: 'KUBECONFIG_FILE')]) {
-          sh '''
-            cp $KUBECONFIG_FILE kubeconfig.yaml
-            kubectl --kubeconfig=kubeconfig.yaml apply -f deployment.yaml
-          '''
+        // Deploy to Kubernetes using the updated kubeconfig file
+        withCredentials([file(credentialsId: 'kubernetes', variable: 'KUBECONFIG_FILE')]) {
+          withKubeConfig(kubeconfigContent: readFile(KUBECONFIG_FILE)) {
+            sh 'kubectl apply -f deployment.yaml'
+          }
         }
       }
     }
