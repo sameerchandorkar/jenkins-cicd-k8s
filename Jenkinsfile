@@ -34,11 +34,9 @@ pipeline {
 
     stage('Deploy to Kubernetes') {
       steps {
-        // Deploy to Kubernetes using the updated kubeconfig file
+        // Set KUBECONFIG environment variable to the path of the Kubernetes configuration file
         withCredentials([file(credentialsId: 'kubernetes', variable: 'KUBECONFIG_FILE')]) {
-          withKubeConfig(kubeconfigContent: readFile(KUBECONFIG_FILE)) {
-            sh 'kubectl apply -f deployment.yaml'
-          }
+          sh 'export KUBECONFIG=$KUBECONFIG_FILE && kubectl apply -f deployment.yaml'
         }
       }
     }
