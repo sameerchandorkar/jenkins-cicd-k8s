@@ -1,32 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: alpine-deployment
   labels:
-    app: nginx
+    app: alpine
 spec:
   replicas: 5
   selector:
     matchLabels:
-      app: nginx
+      app: alpine
   template:
     metadata:
       labels:
-        app: nginx
+        app: alpine
     spec:
       containers:
-        - name: nginx-container
-          image: nginx:latest
-          ports:
-            - containerPort: 80
+        - name: alpine-container
+          image: alpine:latest
+          command: ["echo", "Hello, Kubernetes!"]
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-service
+  name: alpine-service
 spec:
   selector:
-    app: nginx
+    app: alpine
   ports:
     - protocol: TCP
       port: 80
