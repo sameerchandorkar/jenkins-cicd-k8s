@@ -31,4 +31,6 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-  type: LoadBalancer
+      nodePort: 30080    # Add this line for NodePort
+  type: NodePort         # Change the service type to NodePort
+
