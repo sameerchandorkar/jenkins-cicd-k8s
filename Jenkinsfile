@@ -31,6 +31,7 @@ pipeline {
         withCredentials([file(credentialsId: 'kubenetes', variable: 'KUBECONFIG_FILE')]) {
           sh '''
             sudo cp $KUBECONFIG_FILE kubeconfig.yaml
+            kubectl --kubeconfig=kubeconfig.yaml delete -f deployment.yaml --wait
             kubectl --kubeconfig=kubeconfig.yaml apply -f deployment.yaml
           '''
         }
